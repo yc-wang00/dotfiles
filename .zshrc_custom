@@ -8,16 +8,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="kafeitu"
-
-function ya() {
-	local tmp="$(mktemp -t "yazi-cwd.XXXXX")"
-	yazi "$@" --cwd-file="$tmp"
-	if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-		cd -- "$cwd"
-	fi
-	rm -f -- "$tmp"
-}
+ZSH_THEME="gozilla"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -84,15 +75,13 @@ plugins=(git
 	docker-compose
 	zsh-syntax-highlighting
 	zsh-autosuggestions
-	conda-zsh-completion
+	fast-syntax-highlighting
 	task
 )
 
 source $ZSH/oh-my-zsh.sh
 
 export PATH=$PATH:/usr/local/go/bin
-export PATH="/usr/local/cuda-12.2/bin:$PATH"
-export LD_LIBRARY_PATH="/usr/local/cuda-12.2/lib64:$LD_LIBRARY_PATH"
 
 # use kubectl completion 
 source <(kubectl completion zsh)
@@ -118,42 +107,37 @@ bindkey '^H' backward-kill-word
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
 # For a full list of active aliases, run `alias`.
+
+DISABLE_UNTRACKED_FILES_DIRTY="true"
 #
 # Example aliases
 alias s="kitten ssh"
 alias d="kitten diff"
+alias o="xdg-open"
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/titan-yc/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/home/titan-yc/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/titan-yc/anaconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/home/titan-yc/anaconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-
-export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
-
-# Generated for envman. Do not edit.
-[ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
+alias python="python3"
 
 
 autoload -Uz compinit
 zstyle ':completion:*' menu select
 fpath+=~/.zfunc
+export PATH=$PATH:$(go env GOPATH)/bin
+
+eval "$(atuin init zsh --disable-up-arrow)"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/home/titan-yc/google-cloud-sdk/path.zsh.inc' ]; then . '/home/titan-yc/google-cloud-sdk/path.zsh.inc'; fi
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/home/titan-yc/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/titan-yc/google-cloud-sdk/completion.zsh.inc'; fi
+
+export PATH=$PATH:/home/titan-yc/bin
+
+source '/home/titan-yc/lib/azure-cli/az.completion'
+
+. "$HOME/.local/bin/env"
